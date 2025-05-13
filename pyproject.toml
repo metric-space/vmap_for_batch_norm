@@ -1,0 +1,55 @@
+[build-system]
+requires = ["setuptools>=42", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "batch_norm_to_equinox_state"
+version = "0.1.0"
+description = "Understanding JAX and Equinox's approach to batching using batch normalization as the vehicle for understanding"
+authors = [{ name = "metric-space", email = "functor.soup@gmail.com" }]
+dependencies = [
+  "jax[cuda12]",
+  "equinox",
+  "matplotlib",
+  "jaxtyping",
+  "optax",
+  "orbax",
+  "pyyaml",
+  "torchvision"
+]
+requires-python = ">=3.9"
+
+[tool.black]
+line-length = 88
+target-version = ["py39"]
+include = 'diffusion.py'
+exclude = '''
+/(
+    \.git
+  | \.venv
+  | build
+  | dist
+  | lib
+  | lib64
+  | __pycache__
+)/
+'''
+
+[tool.isort]
+profile = "black"
+line_length = 88
+multi_line_output = 3
+include_trailing_comma = true
+known_first_party = ["\.pyi?$"]
+skip = [""]
+
+[tool.ruff]
+line-length = 88
+target-version = "py39"
+fix = true
+select = ["E", "F", "B", "I"]
+ignore = []
+
+[tool.setuptools]
+packages = ["utils"]
+package-dir = {"" = "utils"}
