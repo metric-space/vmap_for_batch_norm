@@ -4,7 +4,7 @@ import jax
 import jax.random as jr
 import jax.numpy as jnp
 from .datasets import mnist
-from jaxtyping import PyTree, Float32, Array
+from jaxtyping import PyTree, Float32, Array, Int32, PRNGKeyArray
 from collections.abc import Callable
 import numpy as np
 import grain
@@ -22,7 +22,7 @@ ParamsType = Union[NNParams, Tuple[NNParams, BatchParams]]
 
 
 # m rows and n_cols
-def random_layer(key, m, n, affine=True):
+def random_layer(key: PRNGKeyArray, m: int, n: int, affine=True) -> ParamType:
     w_key, b_key = jr.split(key, 2)
 
     layer = dict(weight=jr.normal(w_key, (m, n)))
@@ -33,7 +33,7 @@ def random_layer(key, m, n, affine=True):
     return layer
 
 
-def init_nn_params(key, arch: List[Tuple[int, int]]):
+def init_nn_params(key: PRNGKeyArray, arch: List[Tuple[int, int]]) ->  NNParams:
     nn = []
 
     keys = jr.split(key, len(arch))
@@ -63,7 +63,7 @@ def named_grad_norms(grads) -> str:
     }
 
 
-def mnist_dataloader(directory, batch_size=2, seed=14321):
+def mnist_dataloader(directory:str, batch_size: int=2, seed: int=14321) -> Tuple[grain.DataLoader, grain.DataLoader]:
     train_data, train_labels, test_data, test_labels = mnist(directory)
     trainloader = grain.load(
         list(zip(train_data, train_labels)),
@@ -81,7 +81,7 @@ def mnist_dataloader(directory, batch_size=2, seed=14321):
     return trainloader, testloader
 
 
-def forward_pass(nn, image_vector):
+def forward_pass(nn: List[Float32[Array, "y x"]], image_vector: Float32[Array, "x"]) -> Float32[Array, "x"]:
 
     assert image_vector.ndim == 1
 
@@ -93,16 +93,16 @@ def forward_pass(nn, image_vector):
         output = output @ w
         if lt.get("bias", None) is not None:
             output += lt["bias"]
-        else:
-            continue
-        output = jax.nn.sigmoid(output)
+
+        if i < len(nn) - 1:
+            output = jax.nn.sigmoid(output)
 
     assert output.ndim == 1  #
 
     return output
 
 
-def cross_entropy_loss(params, x, labels):
+def cross_entropy_loss(params: NNParams , x: Float32[Array, "batch x"] , labels: Int32[Array, "batch z"]) -> Float32:
 
     logits = jax.vmap(forward_pass, in_axes=(None, 0))(params, x)
     # one-hot, this is batched
@@ -139,7 +139,7 @@ def evaluate_model(
         Float32[Array, "batch predictions"],
     ],
     *args,
-):
+) -> Float32:
 
     total_correct = 0
     total = 0
