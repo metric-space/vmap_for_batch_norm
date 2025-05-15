@@ -1,12 +1,16 @@
 import itertools
+import operator
+
 import jax
 import jax.random as jr
 import jax.numpy as jnp
 
+from typing import List, Tuple
+
+from functools import partial
+
 
 def init_batch_norm_parameters(key, arch: List[Tuple[int,int]]):
-
-     batch_norm_parameters = []
 
      shapes = [(layer_shape[1],2) for layer_shape in arch[:-1]]
 
@@ -79,7 +83,7 @@ def forward_pass_inference(nn, batch_norm_params, running_stats, image_vector):
             continue
 
         if bn is not None:
-            x_i = (output - running_mean)/jnp.pow(running_var + 1e-6, 0.5)
+            x_i = (output - running_mean)/jnp.sqrt(running_var + 1e-6)
             output = x_i*bn[:,0] + bn[:,1]
 
         if i < len(nn) - 1:
@@ -88,9 +92,10 @@ def forward_pass_inference(nn, batch_norm_params, running_stats, image_vector):
     return output
 
 
-def cross_entropy_loss(params, x,  labels):
+def cross_entropy_loss(params, x, labels):
 
-    params, batch_norm_params  = params 
+    params, batch_norm_params = params
+
     #logits = jax.vmap(forward_pass, in_axes=(None,0))(params, x)
     logits, means, vars_ = forward_pass(params, batch_norm_params, x)
 
@@ -100,8 +105,8 @@ def cross_entropy_loss(params, x,  labels):
     return -loss.mean(), (means, vars_)
 
 
-@jax.jit
-def update(cross_entropy, params, batch_norm_params, x, y):
+@partial(jax.jit, static_argnums=0) 
+def update(cross_entropy_loss, params, batch_norm_params, x, y):
     # TODO: extract step_size 
     step_size = 0.01
     (vals, aux), grads = jax.value_and_grad(cross_entropy_loss, has_aux=True)((params, batch_norm_params), x , y)

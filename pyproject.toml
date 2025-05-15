@@ -12,10 +12,7 @@ dependencies = [
   "equinox",
   "matplotlib",
   "jaxtyping",
-  "optax",
-  "orbax",
-  "pyyaml",
-  "torchvision"
+  "grain"
 ]
 requires-python = ">=3.9"
 
@@ -40,8 +37,8 @@ profile = "black"
 line_length = 88
 multi_line_output = 3
 include_trailing_comma = true
-known_first_party = ["\.pyi?$"]
-skip = [""]
+known_first_party = ["batch_norm_to_equinox_state"]
+skip = ["__init__.py"]
 
 [tool.ruff]
 line-length = 88
@@ -51,5 +48,5 @@ select = ["E", "F", "B", "I"]
 ignore = []
 
 [tool.setuptools]
-packages = ["utils"]
-package-dir = {"" = "utils"}
+packages = ["common","batch_norm", "batch_norm_vanilla"]
+package-dir = {"" = "src"}
