@@ -81,13 +81,11 @@ Useful links
 * [Wiki article](https://en.wikipedia.org/wiki/Batch_normalization)
 
 
-### Resuming 
-
-The training algorithm (there does exist the inference side)
+The training algorithm (there does also exist the inference side. Please check the paper or the code in here)
 
 ![batch_normalization](./resources/training_alg.png)
 
-
+### Resuming 
 
 So I have two implementations `vanilla_batch_norm` and  `batch_norm`
 
