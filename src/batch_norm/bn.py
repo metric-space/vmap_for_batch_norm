@@ -1,3 +1,5 @@
+import common
+
 import jax
 import jax.lax as l
 import jax.numpy as jnp
@@ -5,17 +7,27 @@ import jax.numpy as jnp
 import itertools
 import operator
 
+from typing import Tuple, List
+from jaxtyping import PRNGKeyArray, Float32, Array, Int32
+
 
 # I believe activations are of shape = hidden layer width
-def activations_batch_normalization(activations, axis, eta=1e-6):
+def activations_batch_normalization(
+    activations: Float32[Array, "x"], axis: str, eta: Float32 = 1e-6
+) -> Tuple[Float32[Array, "x"], Float32[Array, "x"], Float32[Array, "x"]]:
     mean = l.pmean(activations, axis_name=axis)
-    sq_mean = jax.lax.pmean(activations**2, axis_name="batch")
+    sq_mean = jax.lax.pmean(activations**2, axis_name=axis)
     var = sq_mean - mean**2
 
     return ((activations - mean) / jnp.sqrt(var + eta)), mean, var
 
 
-def forward_pass(nn, batch_norm_params, axis, image_vector):
+def forward_pass(
+    nn: common.NNParams,
+    batch_norm_params: common.BatchParams,
+    axis: str,
+    image_vector: Float32[Array, "z"],
+) -> Float32[Array, "classes"]:
 
     assert image_vector.ndim == 1
 
