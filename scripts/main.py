@@ -27,6 +27,9 @@ class Config:
     )
     steps: int = 2000
     seed: int = 1232
+    eval_steps: int = 10
+    ds_seed: int = 167488
+
 
 
 def init_params(key, arch: List[Tuple[int, int]]):
@@ -54,7 +57,7 @@ if __name__ == "__main__":
     config = Config()
 
     trainloader, test_loader = common.mnist_dataloader(
-        directory="./MNIST", batch_size=config.batch_size
+        directory="./MNIST", batch_size=config.batch_size, seed=config.ds_seed
     )
 
     key = jr.PRNGKey(config.seed)
@@ -71,7 +74,7 @@ if __name__ == "__main__":
             params,
         ) = common.update(params, batch_x, batch_y)
 
-        if step % 5 == 0:
+        if step % config.eval_steps == 0:
             print(f"Loss :{loss} for Step: {step}")
             f = jax.vmap(common.forward_pass, in_axes=(None, 0))
             accuracy = common.evaluate_model(test_loader, f, params)
@@ -81,7 +84,7 @@ if __name__ == "__main__":
     print("====== Training and evaluating with vanilla batch norm ========")
 
     trainloader, test_loader = common.mnist_dataloader(
-        directory="./MNIST", batch_size=config.batch_size
+        directory="./MNIST", batch_size=config.batch_size, seed=config.ds_seed
     )
 
     params, batch_norm_params = init_params(key, config.arch)
@@ -103,7 +106,7 @@ if __name__ == "__main__":
         means.append(means_)
         variances.append(variances_)
 
-        if step % 5 == 0:
+        if step % config.eval_steps == 0:
             print(f"Loss :{loss} for Step: {step}")
 
             running_mean, running_var = calculate_running_stats(means, variances)
@@ -138,7 +141,7 @@ if __name__ == "__main__":
         means.append(means_)
         variances.append(variances_)
 
-        if step % 5 == 0:
+        if step % config.eval_steps == 0:
             print(f"Loss :{loss} for Step: {step}")
 
             running_mean, running_var = calculate_running_stats(means, variances)
@@ -156,12 +159,11 @@ if __name__ == "__main__":
 
     fig, ax = plt.subplots(figsize=(15, 15))
     x, y = zip(*results["baseline"])
-    plt.plot(x, y, color="red")
+    plt.plot(x, y, color="red", label="baseline")
     x, y = zip(*results["vanilla_batch_norm"])
-    plt.plot(x, y, color="green")
+    plt.plot(x, y, color="green", label="vanilla_batch_norm")
     x, y = zip(*results["batch_norm"])
-    plt.plot(x, y, color="blue")
+    plt.plot(x, y, color="blue", label="batch_norm")
+    plt.legend()
 
     plt.savefig("output.png")
-
-    # print(batch_y)

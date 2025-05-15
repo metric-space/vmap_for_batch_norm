@@ -81,11 +81,6 @@ def mnist_dataloader(directory, batch_size=2, seed=14321):
     return trainloader, testloader
 
 
-def inf_dataloader(dataloader):
-    while True:
-        yield from dataloader
-
-
 def forward_pass(nn, image_vector):
 
     assert image_vector.ndim == 1
@@ -159,6 +154,5 @@ def evaluate_model(
 
     acc = total_correct / total
 
-    # TODO: eliminate this
     print(f"Evaluation accuracy: {acc:.4f}")
     return acc
