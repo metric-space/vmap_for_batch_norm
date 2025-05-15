@@ -72,6 +72,18 @@ This is the illusionary wall. Bear with me
 
 ### Short pit stop: the Batch norm
 
+Batch normalization is normalization activations over the batch axis. There's more to it than just that. Turns out it was first introduced to deal
+with covariate shiift and turns out there's a lot more to it and it doesn't decrease covariate shift as much as people think it does
+
+Useful links
+
+* [The first paper introducing it](https://arxiv.org/abs/1502.03167)
+* [Wiki article](https://en.wikipedia.org/wiki/Batch_normalization)
+
+The training algorithm (there does exist the inference side)
+
+![batch_normalization](./resources/training_alg.png)
+
 
 
 So I have two implementations `vanilla_batch_norm` and  `batch_norm`
