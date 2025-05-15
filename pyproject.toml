@@ -3,7 +3,7 @@ requires = ["setuptools>=42", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "batch_norm_to_equinox_state"
+name = "vmap_for_batch_norm"
 version = "0.1.0"
 description = "Understanding JAX and Equinox's approach to batching using batch normalization as the vehicle for understanding"
 authors = [{ name = "metric-space", email = "functor.soup@gmail.com" }]
@@ -37,7 +37,7 @@ profile = "black"
 line_length = 88
 multi_line_output = 3
 include_trailing_comma = true
-known_first_party = ["batch_norm_to_equinox_state"]
+known_first_party = ["vmap_for_batch_norm"]
 skip = ["__init__.py"]
 
 [tool.ruff]

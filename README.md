@@ -1,6 +1,6 @@
 ## What is this?
 
-TLDR; Jax's vmap that forces you to think about map over the batch dimension would at first sight seem to run up against a wall when it comes to **Batch norm**.
+TLDR; Jax's vmap that forces you to think about map over the batch dimension would at first sight seems to run up against a wall when it comes to **Batch norm**.
 The wall is an illusion. I was fooled. And here's my attempt to show that the wall isn't there
 
 
@@ -79,6 +79,9 @@ Useful links
 
 * [The first paper introducing it](https://arxiv.org/abs/1502.03167)
 * [Wiki article](https://en.wikipedia.org/wiki/Batch_normalization)
+
+
+### Resuming 
 
 The training algorithm (there does exist the inference side)
 
